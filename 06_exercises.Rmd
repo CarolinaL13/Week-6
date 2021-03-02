@@ -83,7 +83,11 @@ Once your repository is created, you should always open your **project** rather 
   2. Read in the fake garden harvest data. Find the data [here](https://github.com/llendway/scraping_etc/blob/main/2020_harvest.csv) and click on the `Raw` button to get a direct link to the data. 
   
 ```{r}
-raw 
+library(readr)
+raw_harvest <- read_csv("https://raw.githubusercontent.com/llendway/scraping_etc/main/2020_harvest.csv", 
+    col_types = cols(X5 = col_number(), weight = col_integer()), 
+    skip = 2) %>% 
+  select(-X1)
 ```
   
   
@@ -105,6 +109,9 @@ colors = scales::col_numeric(
   5. Create a table using `gt` with data from your project or from the `garden_harvest` data if your project data aren't ready.
   
   6. Use `patchwork` operators and functions to combine at least two graphs using your project data or `garden_harvest` data if your project data aren't read.
+  
+  
+ [Github Link](https://carolinalopez13.shinyapps.io/Week-6/)
   
 
 **DID YOU REMEMBER TO UNCOMMENT THE OPTIONS AT THE TOP?**
