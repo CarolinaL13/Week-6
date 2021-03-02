@@ -1,0 +1,13 @@
+name: Week-6
+title: Week-6
+username:
+account: carolinalopez13
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3721733
+bundleId: 4290792
+url: https://carolinalopez13.shinyapps.io/Week-6/
+when: 1614697246.02686
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: 06_exercises.Rmd|2020_harvest.csv|app2.R|babynames_app_basic.R|Groceries_dataset.csv|README.md
