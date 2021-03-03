@@ -93,6 +93,14 @@ raw_harvest <- read_csv("https://raw.githubusercontent.com/llendway/scraping_etc
   
   
   3. Read in this [data](https://www.kaggle.com/heeraldedhia/groceries-dataset) from the kaggle website. You will need to download the data first. Save it to your project/repo folder. Do some quick checks of the data to assure it has been read in appropriately.
+  
+```{r}
+#HOW DO I CHANGE THE DATE?
+library(readr)
+Groceries_dataset <- read_csv("Groceries_dataset.csv", 
+    col_types = cols(Member_number = col_character())) 
+```
+  
 
   4. CHALLENGE(not graded): Write code to replicate the table shown below (open the .html file to see it) created from the `garden_harvest` data as best as you can. When you get to coloring the cells, I used the following line of code for the `colors` argument:
   
@@ -108,7 +116,65 @@ colors = scales::col_numeric(
 
   5. Create a table using `gt` with data from your project or from the `garden_harvest` data if your project data aren't ready.
   
+```{r}
+ 
+table2 <-
+  garden_harvest %>% 
+  filter(vegetable == "tomatoes") %>% 
+  group_by(variety) %>% 
+  summarize(total = sum(weight)) %>% 
+  mutate(total_tomato = cumsum(total)) %>% 
+  mutate(percent_of_total = total/158231) %>% 
+  
+gt(
+  tab_header("Tomatoes"),
+   tab_spanner(columns = percent_of_total, total)
+   tab_row_group(column_to_rownames(variety)),
+   fmt_number(columns = vars(total)),
+   fmt_percent(columns = vars(percent_of_total))
+   
+   )
+table2
+```
+  
+  
   6. Use `patchwork` operators and functions to combine at least two graphs using your project data or `garden_harvest` data if your project data aren't read.
+  
+```{r}
+g1 <- garden_harvest %>% 
+  filter(vegetable == c("peas","lettuce")) %>%
+  select(-variety) %>% 
+  group_by(vegetable) %>% 
+  mutate(totalweight = cumsum(weight)) %>% 
+  ggplot(aes(y = totalweight, x = date, color = vegetable)) +
+  geom_line()+
+  labs(title = "Peas & Lettuce Harvest", y = "Total Weight (grams)", x = "Date")
+
+g2 <- garden_harvest %>% 
+  filter(vegetable == "lettuce") %>%
+  filter(variety == c("Farmer's Market Blend","Tatsoi","Lettuce Mixture")) %>% 
+  group_by(variety,date) %>% 
+  summarize(daily_weight = sum(weight)) %>% 
+    ggplot(aes(y = daily_weight, x = date, color = variety)) +
+  geom_line() +
+  labs(title = "Most Harvested Lettuce Varieties", y = "Weight (grams)")+
+  scale_color_manual(values = c("Farmer's Market Blend" = '#99CC33',
+                                'Tatsoi' = '#990000',
+                                'Lettuce Mixture' = '#9999FF'))
+g3 <- garden_harvest %>% 
+  filter(vegetable == "peas") %>%
+  filter(variety == c("Magnolia Blossom","Super Sugar Snap")) %>% 
+  group_by(variety,date) %>% 
+  summarize(daily_weight = sum(weight)) %>% 
+    ggplot(aes(y = daily_weight, x = date, color = variety)) +
+  geom_line() +
+  labs(title = "Most Harvested Pea Varieties", y = "Weight (grams)")+
+  scale_color_manual(values = c("Magnolia Blossom" = '#CC3399',
+                                'Super Sugar Snap' = '#99CCFF'))
+
+g1 | (g3/g2)
+```
+  
   
   
  [Github Link](https://carolinalopez13.shinyapps.io/Week-6/)
