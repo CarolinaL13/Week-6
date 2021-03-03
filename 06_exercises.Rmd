@@ -83,7 +83,7 @@ Once your repository is created, you should always open your **project** rather 
   2. Read in the fake garden harvest data. Find the data [here](https://github.com/llendway/scraping_etc/blob/main/2020_harvest.csv) and click on the `Raw` button to get a direct link to the data. 
   
 ```{r}
-library(readr)
+
 raw_harvest <- read_csv("https://raw.githubusercontent.com/llendway/scraping_etc/main/2020_harvest.csv", 
     col_types = cols(X5 = col_number(), weight = col_integer()), 
     skip = 2) %>% 
@@ -96,9 +96,10 @@ raw_harvest <- read_csv("https://raw.githubusercontent.com/llendway/scraping_etc
   
 ```{r}
 #HOW DO I CHANGE THE DATE?
-library(readr)
+
 Groceries_dataset <- read_csv("Groceries_dataset.csv", 
-    col_types = cols(Member_number = col_character())) 
+    col_types = cols(Member_number = col_character())) %>% 
+  mutate(Date = dmy(Date))
 ```
   
 
@@ -118,23 +119,17 @@ colors = scales::col_numeric(
   
 ```{r}
  
-table2 <-
+
   garden_harvest %>% 
   filter(vegetable == "tomatoes") %>% 
   group_by(variety) %>% 
   summarize(total = sum(weight)) %>% 
-  mutate(total_tomato = cumsum(total)) %>% 
-  mutate(percent_of_total = total/158231) %>% 
-  
-gt(
-  tab_header("Tomatoes"),
-   tab_spanner(columns = percent_of_total, total)
-   tab_row_group(column_to_rownames(variety)),
-   fmt_number(columns = vars(total)),
-   fmt_percent(columns = vars(percent_of_total))
-   
-   )
-table2
+  mutate(percent_of_total = total/sum(total)) %>% 
+  gt() %>% 
+    tab_header("Tomatoes") %>% 
+    fmt_number(columns = vars(total), decimals = 0) %>% 
+    fmt_percent(columns = vars(percent_of_total))
+
 ```
   
   
